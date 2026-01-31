@@ -10,6 +10,12 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        <!-- Favicons -->
+        <link rel="icon" type="image/png" href="/srdi_LOGO.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/srdi_LOGO.png">
+        <link rel="shortcut icon" href="/srdi_LOGO.png" />
+        <meta name="theme-color" content="#4f46e5" />
+
         <!-- Scripts -->
         @routes
         @viteReactRefresh

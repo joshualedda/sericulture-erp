@@ -1,109 +1,53 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
+import { useForm, usePage, Link } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import InputLabel from '@/Components/InputLabel';
+import TextInput from '@/Components/TextInput';
+import InputError from '@/Components/InputError';
+import PrimaryButton from '@/Components/PrimaryButton';
 
-export default function UpdateProfileInformation({
-    mustVerifyEmail,
-    status,
-    className = '',
-}) {
+export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
     const user = usePage().props.auth.user;
-
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
-        useForm({
-            name: user.name,
-            email: user.email,
-        });
-
-    const submit = (e) => {
-        e.preventDefault();
-
-        patch(route('profile.update'));
-    };
+    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
+        name: user.name,
+        email: user.email,
+    });
 
     return (
-        <section className={className}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Profile Information
-                </h2>
-
-                <p className="mt-1 text-sm text-gray-600">
-                    Update your account's profile information and email address.
-                </p>
+        <section className={`bg-white p-8 rounded-3xl border border-slate-200 shadow-sm ${className}`}>
+            <header className="mb-6">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight">Profile Information</h2>
+                <p className="mt-1 text-sm text-slate-500">Update your account's public identity and email address.</p>
             </header>
 
-            <form onSubmit={submit} className="mt-6 space-y-6">
+            <form onSubmit={(e) => { e.preventDefault(); patch(route('profile.update')); }} className="space-y-6 max-w-xl">
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
-
-                    <TextInput
-                        id="name"
-                        className="mt-1 block w-full"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                        isFocused
-                        autoComplete="name"
-                    />
-
+                    <InputLabel htmlFor="name" value="Full Name" className="font-bold text-slate-700" />
+                    <TextInput id="name" className="mt-1 block w-full bg-slate-50 border-slate-200 focus:bg-white transition-all" value={data.name} onChange={(e) => setData('name', e.target.value)} required isFocused />
                     <InputError className="mt-2" message={errors.name} />
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        className="mt-1 block w-full"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                        autoComplete="username"
-                    />
-
+                    <InputLabel htmlFor="email" value="Email Address" className="font-bold text-slate-700" />
+                    <TextInput id="email" type="email" className="mt-1 block w-full bg-slate-50 border-slate-200 focus:bg-white transition-all" value={data.email} onChange={(e) => setData('email', e.target.value)} required />
                     <InputError className="mt-2" message={errors.email} />
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (
-                    <div>
-                        <p className="mt-2 text-sm text-gray-800">
-                            Your email address is unverified.
-                            <Link
-                                href={route('verification.send')}
-                                method="post"
-                                as="button"
-                                className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                Click here to re-send the verification email.
-                            </Link>
+                    <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                        <p className="text-sm text-amber-800 font-medium">
+                            Your email is unverified. 
+                            <Link href={route('verification.send')} method="post" as="button" className="ml-2 underline hover:text-amber-900 font-bold">Resend link</Link>
                         </p>
-
-                        {status === 'verification-link-sent' && (
-                            <div className="mt-2 text-sm font-medium text-green-600">
-                                A new verification link has been sent to your
-                                email address.
-                            </div>
-                        )}
+                        {status === 'verification-link-sent' && <div className="mt-2 text-xs font-bold text-emerald-600 uppercase tracking-wider">Verification link sent!</div>}
                     </div>
                 )}
 
-                <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
-
-                    <Transition
-                        show={recentlySuccessful}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
-                        leaveTo="opacity-0"
-                    >
-                        <p className="text-sm text-gray-600">
-                            Saved.
+                <div className="flex items-center gap-4 pt-2">
+                    <PrimaryButton disabled={processing} className="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700">Save Changes</PrimaryButton>
+                    <Transition show={recentlySuccessful} enter="transition ease-in-out" enterFrom="opacity-0" leave="transition ease-in-out" leaveTo="opacity-0">
+                        <p className="text-sm font-bold text-emerald-600 flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                            Saved Successfully
                         </p>
                     </Transition>
                 </div>
